@@ -1,12 +1,15 @@
 #include "Game.h"
 
-Game::Game(int h, int w) : WINDOW_SIZE_H(h), WINDOW_SIZE_W(w), window(sf::RenderWindow(sf::VideoMode(WINDOW_SIZE_W, WINDOW_SIZE_H), "Smart Slimes"))
+Game::Game(unsigned int h, unsigned int w, Gamemode gm) :
+    WINDOW_SIZE_H(h),
+    WINDOW_SIZE_W(w),
+    window(sf::RenderWindow(sf::VideoMode(WINDOW_SIZE_W, WINDOW_SIZE_H), "Smart Slimes")),
+    gamemode(gm),
+    mNet(WINDOW_SIZE_H * 0.3, WINDOW_SIZE_W * 0.01, WINDOW_SIZE_H * 0.7, WINDOW_SIZE_W * (0.5-0.01))
+    // mPlayer1(0, 0),
+    // mPlayer2(0, 0),
+    // mBall(0, 0)
 {
-}
-
-bool Game::Running()
-{
-	return window.isOpen();
 }
 
 void Game::ProcessEvents()
@@ -19,12 +22,24 @@ void Game::ProcessEvents()
 	}
 }
 
+void Game::update()
+{
+}
+
+void Game::draw()
+{
+    window.clear();
+    mNet.draw(window);
+    window.display();
+}
+
 void Game::run()
 {
-	while (Running())
+	while (window.isOpen())
 	{
 		ProcessEvents();
-		window.display();
+        update();
+		draw();
 	}
 }
 
