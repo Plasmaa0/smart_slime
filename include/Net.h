@@ -1,7 +1,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-class Net
+#include "Entity.h"
+
+class Net : public Entity
 {
    private:
 	float height;
@@ -13,5 +15,5 @@ class Net
 
    public:
 	Net(float pHeight, float pWidth, float pLeftX, float pTopY);
-	void draw(sf::RenderTarget &pTarget) const;
+	void draw(sf::RenderTarget &pTarget) const override;
 };
