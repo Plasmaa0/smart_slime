@@ -106,10 +106,10 @@ void Game::update(sf::Time deltatime)
 		playerCenter = mPlayer2.m_position +
 		               sf::Vector2f(mPlayer2.m_radius, mPlayer2.m_radius);
 	}
-	if ((ballCenter - playerCenter).length() <
+	if (length(ballCenter - playerCenter) <
 	    mBall.m_radius + mPlayer2.m_radius) {
 		mBall.m_velocity -=
-		    2.0f * mBall.m_velocity.projectedOnto(playerCenter - ballCenter);
+		    2.0f * projectedOnto(mBall.m_velocity, playerCenter - ballCenter);
 	}
 
 	if (mPlayer1.m_position.y + mPlayer1.m_radius > WINDOW_SIZE_H)
