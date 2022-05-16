@@ -10,7 +10,7 @@ Net::Net(float pHeight,
     LeftX(pLeftX),
     mRect(sf::Vector2f(width, height))
 {
-    mRect.setPosition(LeftX, TopY);
+    mRect.setPosition(sf::Vector2f(LeftX, TopY));
 }
 
 void Net::draw(sf::RenderTarget &pTarget) const {
