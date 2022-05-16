@@ -12,7 +12,7 @@ CC_FLAGS_EXEC=-lsfml-graphics -lsfml-window -lsfml-system
 SRC=$(wildcard $(SRC_PATH)/*.cpp)
 OBJ=$(patsubst $(SRC_PATH)/%.cpp,$(OBJ_PATH)/%.o,$(SRC))
 
-EXEC=app
+EXEC=app.out
 
 all: $(EXEC)
 
