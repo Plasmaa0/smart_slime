@@ -1,0 +1,14 @@
+﻿---
+BasedOnStyle: Google
+AllowShortFunctionsOnASingleLine: Empty
+BreakBeforeBraces: Linux
+FixNamespaceComments: 'true'
+IndentWidth: '4'
+Language: Cpp
+NamespaceIndentation: All
+SortIncludes: 'true'
+Standard: Auto
+TabWidth: '4'
+UseTab: ForIndentation
+
+...
