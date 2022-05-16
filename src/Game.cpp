@@ -112,6 +112,15 @@ void Game::update(sf::Time deltatime)
 		    2.0f * projectedOnto(mBall.m_velocity, playerCenter - ballCenter);
 	}
 
+	if (WINDOW_SIZE_W * (0.5 - 0.01) < ballCenter.x + mBall.m_radius and
+	    ballCenter.x - mBall.m_radius < WINDOW_SIZE_W * (0.5 + 0.01) and
+	    ballCenter.y + mBall.m_radius > WINDOW_SIZE_H * 0.7) {
+		mBall.m_velocity.x *= -1.0f;
+		if (ballCenter.y < WINDOW_SIZE_H * 0.75) {
+			mBall.m_velocity.y *= -1.0f;
+		}
+	}
+
 	if (mPlayer1.m_position.y + mPlayer1.m_radius > WINDOW_SIZE_H)
 		mPlayer1.m_position.y = WINDOW_SIZE_H - mPlayer1.m_radius;
 	if (mPlayer1.m_position.x < 0) mPlayer1.m_position.x = 0;
@@ -141,7 +150,7 @@ void Game::draw()
 void Game::run()
 {
 	sf::Clock clock;
-	sf::Time timePerFrame = sf::seconds(1.0f / 30.0f);
+	sf::Time timePerFrame = sf::seconds(1.0f / 70.0f);
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
 	while (window.isOpen()) {
 		timeSinceLastUpdate += clock.restart();
