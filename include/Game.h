@@ -27,7 +27,7 @@ class Game
 	Net mNet;
 	// Player mPlayer1;
 	// Player mPlayer2;
-	// Ball mBall;
+	Ball mBall;
    public:
 	Game(unsigned int h = 600U, unsigned int w = 800U, Gamemode gm = GM_SINGLE);
 	void run();
