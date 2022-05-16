@@ -20,13 +20,13 @@ class Game
 	unsigned int WINDOW_SIZE_W;
 	sf::RenderWindow window;
 	void ProcessEvents();
-	void update();
+	void update(sf::Time deltatime);
 	void draw();
 	Gamemode gamemode;
 
 	Net mNet;
-	// Player mPlayer1;
-	// Player mPlayer2;
+	Player mPlayer1;
+	Player mPlayer2;
 	Ball mBall;
    public:
 	Game(unsigned int h = 600U, unsigned int w = 800U, Gamemode gm = GM_SINGLE);
