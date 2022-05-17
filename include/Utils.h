@@ -11,3 +11,5 @@ float lengthSq(const sf::Vector2f &vector);
 float length(const sf::Vector2f &vector);
 
 sf::Vector2f projectedOnto(const sf::Vector2f &vector, const sf::Vector2f &axis);
+
+float sigmoid(const float x);

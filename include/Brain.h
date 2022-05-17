@@ -1,5 +1,11 @@
 #pragma once
 
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+
+#include "Utils.h"
+
 class Brain
 {
    private:
