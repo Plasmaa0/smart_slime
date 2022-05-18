@@ -5,10 +5,11 @@
 #include "Net.h"
 #include "Player.h"
 #include "Utils.h"
+#include "BrainContainer.h"
 
 class Game
 {
-   private:
+public:
 	/* Game modes:
 	 * GM_SINGLE - left player controlled by WAD, right player controlled by NN
 	 * GM_1PC2PLAYERS - both controlled by WAD and arrows,
@@ -29,6 +30,8 @@ class Game
 	Player mPlayer1;
 	Player mPlayer2;
 	Ball mBall;
+
+    BrainContainer *brains;
    public:
 	Game(unsigned int h = 600U, unsigned int w = 800U, Gamemode gm = GM_SINGLE);
 	void run();

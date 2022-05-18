@@ -13,6 +13,8 @@ Game::Game(unsigned int h, unsigned int w, Gamemode gm)
       mPlayer2(w - 2 * (h + w) / 30, h - (h + w) / 30, (h + w) / 30),
       mBall(0, 0, (h + w) / 50)
 {
+    if(gamemode != GM_1PC2PLAYERS)
+        brains = new BrainContainer();
 }
 
 void Game::ProcessEvents()
@@ -45,18 +47,18 @@ void Game::ProcessEvents()
 						break;
 					}
 
-					case sf::Keyboard::Left: {
-						mPlayer2.setMovingLeft(true);
-						break;
-					}
-					case sf::Keyboard::Right: {
-						mPlayer2.setMovingRight(true);
-						break;
-					}
-					case sf::Keyboard::Up: {
-						mPlayer2.setJumping(true);
-						break;
-					}
+					// case sf::Keyboard::Left: {
+					// 	mPlayer2.setMovingLeft(true);
+					// 	break;
+					// }
+					// case sf::Keyboard::Right: {
+					// 	mPlayer2.setMovingRight(true);
+					// 	break;
+					// }
+					// case sf::Keyboard::Up: {
+					// 	mPlayer2.setJumping(true);
+					// 	break;
+					// }
 
 					default:
 						break;
@@ -70,6 +72,38 @@ void Game::ProcessEvents()
 
 void Game::update(sf::Time deltatime)
 {
+    if(gamemode == GM_ZEROPLAYER) {
+        mPlayer1.setMovingLeft(false);
+        mPlayer1.setMovingRight(false);
+        mPlayer1.setJumping(false);
+        mPlayer2.setMovingLeft(false);
+        mPlayer2.setMovingRight(false);
+        mPlayer2.setJumping(false);
+        int desicionleft = brains->left()(mPlayer1.m_position.x,
+            mPlayer1.m_position.y, mPlayer1.m_velocity.x,
+            mPlayer1.m_velocity.y, mBall.m_position.x, mBall.m_position.y,
+            mBall.m_velocity.x, mBall.m_velocity.y
+        );
+        int desicionright = brains->right()(WINDOW_SIZE_W - mPlayer2.m_position.x,
+            mPlayer2.m_position.y, -mPlayer2.m_velocity.x,
+            mPlayer2.m_velocity.y, WINDOW_SIZE_W - mBall.m_position.x, mBall.m_position.y,
+            -mBall.m_velocity.x, mBall.m_velocity.y
+        );
+        if(desicionleft == 1)
+            mPlayer1.setMovingLeft(true);
+        else if(desicionleft == 2)
+            mPlayer1.setMovingRight(true);
+        else if(desicionleft == 3)
+            mPlayer1.setJumping(true);
+
+        if(desicionright == 1)
+            mPlayer2.setMovingLeft(true);
+        else if(desicionright == 2)
+            mPlayer2.setMovingRight(true);
+        else if(desicionright == 3)
+            mPlayer2.setJumping(true);
+    }
+
 	if (mPlayer1.m_position.y < WINDOW_SIZE_H - mPlayer1.m_radius - 10)
 		mPlayer1.setJumping(false);
 	if (mPlayer2.m_position.y < WINDOW_SIZE_H - mPlayer2.m_radius - 10)
