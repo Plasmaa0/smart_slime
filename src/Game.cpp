@@ -279,13 +279,14 @@ void Game::ProcessPhysicsAfter()
 	sf::Vector2f ballCenter =
 	    mBall.m_position + sf::Vector2f(mBall.m_radius, mBall.m_radius);
 
-	if (WINDOW_SIZE_W * (0.5 - 0.01) < ballCenter.x + mBall.m_radius and
-	    ballCenter.x - mBall.m_radius < WINDOW_SIZE_W * (0.5 + 0.01) and
-	    ballCenter.y + mBall.m_radius > WINDOW_SIZE_H * 0.7) {
-		mBall.m_velocity.x *= -1.0f;
-		if (ballCenter.y < WINDOW_SIZE_H * 0.75) {
-			mBall.m_velocity.y *= -1.0f;
-		}
+	auto NearestX =
+	    std::max(mNet.LeftX, std::min(ballCenter.x, mNet.LeftX + mNet.width));
+	auto NearestY =
+	    std::max(mNet.TopY, std::min(ballCenter.y, mNet.TopY + mNet.height));
+	sf::Vector2f nearestNetPoint(NearestX, NearestY);
+	sf::Vector2f BallToNet = ballCenter - nearestNetPoint;
+	if (lengthSq(BallToNet) < (mBall.m_radius * mBall.m_radius)) {
+		mBall.m_velocity = normalized(BallToNet) * (length(mBall.m_velocity));
 	}
 
 	if (mPlayer1.m_position.y + mPlayer1.m_radius > WINDOW_SIZE_H)

@@ -14,6 +14,7 @@ class Net : public Entity
 	sf::RectangleShape mRect;
 
    public:
+	friend class Game;
 	Net(float pHeight, float pWidth, float pLeftX, float pTopY);
 	void draw(sf::RenderTarget &pTarget) const override;
 };
