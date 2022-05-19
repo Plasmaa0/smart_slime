@@ -6,7 +6,7 @@ OBJ_PATH=obj
 
 CC=g++
 CC_FLAGS_GENERIC=-Wall -std=c++2a
-CC_FLAGS_OBJ=-I $(INCLUDE_PATH)
+CC_FLAGS_OBJ=-I $(INCLUDE_PATH) -D COLLISION_HELPERS
 CC_FLAGS_EXEC=-lsfml-graphics -lsfml-window -lsfml-system
 
 SRC=$(wildcard $(SRC_PATH)/*.cpp)

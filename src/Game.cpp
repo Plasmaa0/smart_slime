@@ -12,7 +12,8 @@ Game::Game(unsigned int h, unsigned int w, Gamemode gm)
       mPlayer1(0, h - (h + w) / 30, (h + w) / 30),
       mPlayer2(w - 2 * (h + w) / 30, h - (h + w) / 30, (h + w) / 30),
       mBall(0, 0, (h + w) / 50),
-      scores{0, 0}
+      scores{0, 0},
+      FPS{70}
 {
 	if (gamemode != GM_1PC2PLAYERS) brains = new BrainContainer(1000);
 }
@@ -154,7 +155,7 @@ void Game::draw()
 void Game::run()
 {
 	sf::Clock clock;
-	sf::Time timePerFrame = sf::seconds(1.0f / 70.0f);
+	sf::Time timePerFrame = sf::seconds(1.0f / FPS);
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
 	while (window.isOpen()) {
 		timeSinceLastUpdate += clock.restart();
@@ -217,7 +218,7 @@ std::pair<bool, bool> Game::ProcessWin()
 	if (mBall.m_position.y + 2 * mBall.m_radius > WINDOW_SIZE_H) {
 		// mBall.m_velocity.y *= -1.0f;
 		// mBall.m_position.y = WINDOW_SIZE_H - 2 * mBall.m_radius;
-		bool LeftWon = (mBall.m_position.x > WINDOW_SIZE_W / 2);
+		bool LeftWon = (mBall.m_position.x > WINDOW_SIZE_W / 2.0f);
 
 		// Throw ball from the top
 		mBall.m_position = sf::Vector2f(0, 0);
@@ -235,7 +236,7 @@ std::pair<bool, bool> Game::ProcessWin()
 void Game::ProcessPhysicsAfter()
 {
 	sf::Vector2f playerCenter;
-	auto ballCenter =
+	sf::Vector2f ballCenter =
 	    mBall.m_position + sf::Vector2f(mBall.m_radius, mBall.m_radius);
 	if (ballCenter.x < WINDOW_SIZE_W / 2.0f) {
 		playerCenter = mPlayer1.m_position +
@@ -246,8 +247,13 @@ void Game::ProcessPhysicsAfter()
 	}
 	if (length(ballCenter - playerCenter) <
 	    mBall.m_radius + mPlayer2.m_radius) {
+		float penetration_depth = length(ballCenter - playerCenter) -
+		                          mBall.m_radius - mPlayer2.m_radius;
 		mBall.m_velocity -=
 		    2.0f * projectedOnto(mBall.m_velocity, playerCenter - ballCenter);
+		mBall.m_position += (ballCenter - playerCenter).normalized() *
+		                    penetration_depth * (-1.5f);
+		std::cout << "penetration_depth: " << penetration_depth << std::endl;
 	}
 
 	if (WINDOW_SIZE_W * (0.5 - 0.01) < ballCenter.x + mBall.m_radius and

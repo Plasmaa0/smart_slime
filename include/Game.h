@@ -16,7 +16,7 @@ class Game
 	 * GM_1PC2PLAYERS - both controlled by WAD and arrows,
 	 * GM_ZEROPLAYER - both controlled by NN, this GM used for training
 	 */
-	enum Gamemode { GM_SINGLE, GM_1PC2PLAYERS, GM_ZEROPLAYER };
+	enum Gamemode { GM_ZEROPLAYER, GM_SINGLE, GM_1PC2PLAYERS };
 
    private:
 	unsigned int WINDOW_SIZE_H;
@@ -37,6 +37,7 @@ class Game
 
 	BrainContainer *brains;
 	std::pair<int, int> scores;
+	uint8_t FPS;
 
    public:
 	Game(unsigned int h = 600U, unsigned int w = 800U, Gamemode gm = GM_SINGLE);

@@ -80,7 +80,7 @@ void BrainContainer::generateNewPopulation() {
             brains[i] = Brain(brains[bestBrainI]);
             brains[i].mutate(1./CurrentGenerationNumber);
         }
-    std::cout << bestBrainFitness << std::endl;
+    std::cout <<"fitness:"<< bestBrainFitness << std::endl;
     memset(brains_fitness, 0, sizeof(unsigned int) * GenerationSize);
 
     CurrentGenerationNumber++;
