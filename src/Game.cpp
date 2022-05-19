@@ -213,8 +213,8 @@ void Game::ProcessPhysicsBefore()
 		                          mBall.m_radius - mPlayer2.m_radius;
 		mBall.m_velocity -=
 		    2.0f * projectedOnto(mBall.m_velocity, playerCenter - ballCenter);
-		mBall.m_position += (ballCenter - playerCenter).normalized() *
-		                    penetration_depth * (-1.5f);
+		mBall.m_position +=
+		    normalized(ballCenter - playerCenter) * penetration_depth * (-1.5f);
 		// std::cout << "penetration_depth: " << penetration_depth << std::endl;
 	}
 
