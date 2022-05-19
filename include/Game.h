@@ -22,9 +22,11 @@ class Game
 	unsigned int WINDOW_SIZE_H;
 	unsigned int WINDOW_SIZE_W;
 	sf::RenderWindow window;
+	void ResetBall();
 	void ProcessPhysicsAfter();
 	void ProcessPhysicsBefore();
-	std::pair<bool, bool> ProcessWin();  // if anyone won? / if is was left?
+	std::pair<bool, bool> CheckWin();  // if anyone won? / if is was left?
+	void ProcessWin();
 	void ProcessEvents();
 	void update(sf::Time deltatime);
 	void draw();
@@ -38,6 +40,7 @@ class Game
 	BrainContainer *brains;
 	std::pair<int, int> scores;
 	uint8_t FPS;
+	bool paused;
 
    public:
 	Game(unsigned int h = 600U, unsigned int w = 800U, Gamemode gm = GM_SINGLE);

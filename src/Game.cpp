@@ -13,7 +13,8 @@ Game::Game(unsigned int h, unsigned int w, Gamemode gm)
       mPlayer2(w - 2 * (h + w) / 30, h - (h + w) / 30, (h + w) / 30),
       mBall(0, 0, (h + w) / 50),
       scores{0, 0},
-      FPS{70}
+      FPS{70},
+      paused{false}
 {
 	if (gamemode != GM_1PC2PLAYERS) brains = new BrainContainer(1000);
 }
@@ -34,30 +35,39 @@ void Game::ProcessEvents()
 						window.close();
 						break;
 					}
+					case sf::Keyboard::R: {
+						ResetBall();
+						scores = {0, 0};
+						break;
+					}
+					case sf::Keyboard::Space: {
+						paused = !paused;
+						break;
+					}
 
 					case sf::Keyboard::W: {
-						mPlayer1.setJumping(true);
+						mPlayer1.setJumping(true and not paused);
 						break;
 					}
 					case sf::Keyboard::A: {
-						mPlayer1.setMovingLeft(true);
+						mPlayer1.setMovingLeft(true and not paused);
 						break;
 					}
 					case sf::Keyboard::D: {
-						mPlayer1.setMovingRight(true);
+						mPlayer1.setMovingRight(true and not paused);
 						break;
 					}
 
 					case sf::Keyboard::Left: {
-						mPlayer2.setMovingLeft(true);
+						mPlayer2.setMovingLeft(true and not paused);
 						break;
 					}
 					case sf::Keyboard::Right: {
-						mPlayer2.setMovingRight(true);
+						mPlayer2.setMovingRight(true and not paused);
 						break;
 					}
 					case sf::Keyboard::Up: {
-						mPlayer2.setJumping(true);
+						mPlayer2.setJumping(true and not paused);
 						break;
 					}
 
@@ -69,23 +79,25 @@ void Game::ProcessEvents()
 				break;
 		}
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		mPlayer1.setJumping(true);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-		mPlayer1.setMovingLeft(true);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		mPlayer1.setMovingRight(true);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-		mPlayer2.setMovingLeft(true);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-		mPlayer2.setMovingRight(true);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-		mPlayer2.setJumping(true);
+	if (not paused) {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+			mPlayer1.setJumping(true);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+			mPlayer1.setMovingLeft(true);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+			mPlayer1.setMovingRight(true);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+			mPlayer2.setMovingLeft(true);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+			mPlayer2.setMovingRight(true);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+			mPlayer2.setJumping(true);
+		}
 	}
 }
 
@@ -123,23 +135,14 @@ void Game::update(sf::Time deltatime)
 	}
 
 	ProcessPhysicsBefore();
-	std::pair<bool, bool> WinResults = ProcessWin();
-	if (WinResults.first) {
-		if (gamemode == GM_ZEROPLAYER) brains->setResult(WinResults.second);
-		if (WinResults.second)  // left
-			scores.first++;
-		else  // right
-			scores.second++;
-		using std::to_string;
-		window.setTitle(to_string(scores.first) + ", " +
-		                to_string(scores.second));
-	}
 
 	mBall.update(deltatime);
 	mPlayer1.update(deltatime);
 	mPlayer2.update(deltatime);
 
 	ProcessPhysicsAfter();
+
+	// ProcessWin();
 }
 
 void Game::draw()
@@ -162,11 +165,15 @@ void Game::run()
 		while (timeSinceLastUpdate > timePerFrame) {
 			timeSinceLastUpdate -= timePerFrame;
 			ProcessEvents();
-			if (gamemode == GM_ZEROPLAYER and
-			    (not sf::Keyboard::isKeyPressed(sf::Keyboard::P)))
-				for (unsigned int i = 0; i < 1000; i++) update(timePerFrame);
-			else
-				update(timePerFrame);
+			if (not paused) {
+				if (gamemode == GM_ZEROPLAYER and
+				    (not sf::Keyboard::isKeyPressed(sf::Keyboard::P))) {
+					for (unsigned int i = 0; i < 1000; i++)
+						update(timePerFrame);
+				} else {
+					update(timePerFrame);
+				}
+			}
 		}
 		draw();
 	}
@@ -213,16 +220,15 @@ void Game::ProcessPhysicsBefore()
 }
 
 // if anyone won? / if is was left?
-std::pair<bool, bool> Game::ProcessWin()
+std::pair<bool, bool> Game::CheckWin()
 {
 	if (mBall.m_position.y + 2 * mBall.m_radius > WINDOW_SIZE_H) {
 		// mBall.m_velocity.y *= -1.0f;
 		// mBall.m_position.y = WINDOW_SIZE_H - 2 * mBall.m_radius;
 		bool LeftWon = (mBall.m_position.x > WINDOW_SIZE_W / 2.0f);
-
+		std::cout << "endgame" << std::endl;
 		// Throw ball from the top
-		mBall.m_position = sf::Vector2f(0, 0);
-		mBall.m_velocity = sf::Vector2f(100, 0);
+		ResetBall();
 
 		return {true, LeftWon};
 		// if (mBall.m_position.x <= WINDOW_SIZE_W / 2)  // left lose
@@ -231,6 +237,21 @@ std::pair<bool, bool> Game::ProcessWin()
 		// 	return {true, true};
 	}
 	return {false, false};
+}
+
+void Game::ProcessWin()
+{
+	std::pair<bool, bool> WinResults = CheckWin();
+	if (WinResults.first) {
+		if (gamemode == GM_ZEROPLAYER) brains->setResult(WinResults.second);
+		if (WinResults.second)  // left
+			scores.first++;
+		else  // right
+			scores.second++;
+		using std::to_string;
+		window.setTitle(to_string(scores.first) + ", " +
+		                to_string(scores.second));
+	}
 }
 
 void Game::ProcessPhysicsAfter()
@@ -253,7 +274,7 @@ void Game::ProcessPhysicsAfter()
 		    2.0f * projectedOnto(mBall.m_velocity, playerCenter - ballCenter);
 		mBall.m_position += (ballCenter - playerCenter).normalized() *
 		                    penetration_depth * (-1.5f);
-		std::cout << "penetration_depth: " << penetration_depth << std::endl;
+		// std::cout << "penetration_depth: " << penetration_depth << std::endl;
 	}
 
 	if (WINDOW_SIZE_W * (0.5 - 0.01) < ballCenter.x + mBall.m_radius and
@@ -279,4 +300,11 @@ void Game::ProcessPhysicsAfter()
 		mPlayer2.m_position.x = WINDOW_SIZE_W - 2 * mPlayer2.m_radius;
 	if (mPlayer2.m_position.x < WINDOW_SIZE_W * (0.5 + 0.01))
 		mPlayer2.m_position.x = WINDOW_SIZE_W * (0.5 + 0.01);
+}
+
+void Game::ResetBall()
+{
+	mBall.m_position = sf::Vector2f(0, 0);
+	mBall.m_velocity = sf::Vector2f(100, 0);
+	mBall.m_acceleration = sf::Vector2f(0, 0);
 }
