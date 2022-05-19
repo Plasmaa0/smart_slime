@@ -197,6 +197,27 @@ void Game::test_application()
 
 void Game::ProcessPhysicsBefore()
 {
+	sf::Vector2f playerCenter;
+	sf::Vector2f ballCenter =
+	    mBall.m_position + sf::Vector2f(mBall.m_radius, mBall.m_radius);
+	if (ballCenter.x < WINDOW_SIZE_W / 2.0f) {
+		playerCenter = mPlayer1.m_position +
+		               sf::Vector2f(mPlayer1.m_radius, mPlayer1.m_radius);
+	} else {
+		playerCenter = mPlayer2.m_position +
+		               sf::Vector2f(mPlayer2.m_radius, mPlayer2.m_radius);
+	}
+	if (length(ballCenter - playerCenter) <
+	    mBall.m_radius + mPlayer2.m_radius) {
+		float penetration_depth = length(ballCenter - playerCenter) -
+		                          mBall.m_radius - mPlayer2.m_radius;
+		mBall.m_velocity -=
+		    2.0f * projectedOnto(mBall.m_velocity, playerCenter - ballCenter);
+		mBall.m_position += (ballCenter - playerCenter).normalized() *
+		                    penetration_depth * (-1.5f);
+		// std::cout << "penetration_depth: " << penetration_depth << std::endl;
+	}
+
 	if (mPlayer1.m_position.y < WINDOW_SIZE_H - mPlayer1.m_radius - 10)
 		mPlayer1.setJumping(false);
 
@@ -226,7 +247,6 @@ std::pair<bool, bool> Game::CheckWin()
 		// mBall.m_velocity.y *= -1.0f;
 		// mBall.m_position.y = WINDOW_SIZE_H - 2 * mBall.m_radius;
 		bool LeftWon = (mBall.m_position.x > WINDOW_SIZE_W / 2.0f);
-		std::cout << "endgame" << std::endl;
 		// Throw ball from the top
 		ResetBall();
 
@@ -256,26 +276,8 @@ void Game::ProcessWin()
 
 void Game::ProcessPhysicsAfter()
 {
-	sf::Vector2f playerCenter;
 	sf::Vector2f ballCenter =
 	    mBall.m_position + sf::Vector2f(mBall.m_radius, mBall.m_radius);
-	if (ballCenter.x < WINDOW_SIZE_W / 2.0f) {
-		playerCenter = mPlayer1.m_position +
-		               sf::Vector2f(mPlayer1.m_radius, mPlayer1.m_radius);
-	} else {
-		playerCenter = mPlayer2.m_position +
-		               sf::Vector2f(mPlayer2.m_radius, mPlayer2.m_radius);
-	}
-	if (length(ballCenter - playerCenter) <
-	    mBall.m_radius + mPlayer2.m_radius) {
-		float penetration_depth = length(ballCenter - playerCenter) -
-		                          mBall.m_radius - mPlayer2.m_radius;
-		mBall.m_velocity -=
-		    2.0f * projectedOnto(mBall.m_velocity, playerCenter - ballCenter);
-		mBall.m_position += (ballCenter - playerCenter).normalized() *
-		                    penetration_depth * (-1.5f);
-		// std::cout << "penetration_depth: " << penetration_depth << std::endl;
-	}
 
 	if (WINDOW_SIZE_W * (0.5 - 0.01) < ballCenter.x + mBall.m_radius and
 	    ballCenter.x - mBall.m_radius < WINDOW_SIZE_W * (0.5 + 0.01) and
