@@ -10,6 +10,7 @@ class Brain
 {
    private:
 	float dna[51];
+    mutable unsigned int countOfEval = 0;
 
    public:
 	Brain();
@@ -27,4 +28,5 @@ class Brain
 
 	// static Brain crossingover(const Brain &A, const Brain &B);
 	void mutate(const float alpha);
+    unsigned int getCountOfEval() const;
 };

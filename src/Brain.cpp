@@ -8,8 +8,8 @@ Brain::Brain(const Brain &from)
 
 void Brain::randomize()
 {
-	// TODO using std::normal_distribution instead of rand()
-	for (unsigned int i = 0; i < 51; i++) dna[i] = (rand() % 100 - 50) / 50.;
+	// TODO using std::normal_distribution
+	for (unsigned int i = 0; i < 51; i++) dna[i] = uniform(-1.f, 1.f);
 }
 
 unsigned int Brain::operator()(float Px, float Py, float Pvx, float Pvy, float Bx,
@@ -38,6 +38,8 @@ unsigned int Brain::operator()(float Px, float Py, float Pvx, float Pvy, float B
 		return 2;
 	if (result[2] >= result[0] and result[2] >= result[1] and result[2] > 0.5)
 		return 3;
+
+    countOfEval++;
 	return 0;
 }
 
@@ -47,8 +49,14 @@ void Brain::mutate(const float alpha)
 {
 	// TODO: USE normal_distribution much better!!!
 	// this implementation made just for testing
-	if (rand() % 100 > (alpha * 100)) {
-		int r1 = rand() % 51;
-		dna[r1] += (rand() % 100 - 50) / 100.;
-	}
+	// if (uniform(0, 1) > alpha) {
+	// 	int r1 = uniformInt(0, 50);
+	// 	dna[r1] += uniform(-0.5f, 0.5f);
+	// }
+    for(unsigned int i=0; i<51; i++)
+    	dna[i] += uniform(-alpha, alpha);
+}
+
+unsigned int Brain::getCountOfEval() const {
+    return countOfEval;
 }

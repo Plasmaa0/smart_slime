@@ -14,7 +14,7 @@ Game::Game(unsigned int h, unsigned int w, Gamemode gm)
       mBall(0, 0, (h + w) / 50)
 {
     if(gamemode != GM_1PC2PLAYERS)
-        brains = new BrainContainer();
+        brains = new BrainContainer(1000);
 }
 
 void Game::ProcessEvents()
@@ -27,7 +27,7 @@ void Game::ProcessEvents()
 				break;
 			}
 			case sf::Event::KeyPressed: {
-				printf("pizda\n");
+				// printf("pizda\n");
 				switch (event.key.code) {
 					case sf::Keyboard::Q: {
 						window.close();
@@ -97,9 +97,9 @@ void Game::update(sf::Time deltatime)
             mPlayer1.setJumping(true);
 
         if(desicionright == 1)
-            mPlayer2.setMovingLeft(true);
-        else if(desicionright == 2)
             mPlayer2.setMovingRight(true);
+        else if(desicionright == 2)
+            mPlayer2.setMovingLeft(true);
         else if(desicionright == 3)
             mPlayer2.setJumping(true);
     }
@@ -122,8 +122,19 @@ void Game::update(sf::Time deltatime)
 		mBall.m_position.x = WINDOW_SIZE_W - 2 * mBall.m_radius;
 	}
 	if (mBall.m_position.y + 2 * mBall.m_radius > WINDOW_SIZE_H) {
-		mBall.m_velocity.y *= -1.0f;
-		mBall.m_position.y = WINDOW_SIZE_H - 2 * mBall.m_radius;
+		// mBall.m_velocity.y *= -1.0f;
+		// mBall.m_position.y = WINDOW_SIZE_H - 2 * mBall.m_radius;
+
+        if(gamemode == GM_ZEROPLAYER) {
+            if(mBall.m_position.x <= WINDOW_SIZE_W/2) // left lose
+                brains->setResult(false);
+            else  // left win
+                brains->setResult(true);
+        }
+
+        // Throw ball from the top
+        mBall.m_position = sf::Vector2f(0, 0);
+        mBall.m_velocity = sf::Vector2f(100, 0);
 	}
 
 	mBall.update(deltatime);
@@ -182,7 +193,11 @@ void Game::run()
 		while (timeSinceLastUpdate > timePerFrame) {
 			timeSinceLastUpdate -= timePerFrame;
 			ProcessEvents();
-			update(timePerFrame);
+            if(not sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+                for(unsigned int i=0; i<1000; i++)
+            		update(timePerFrame);
+            else
+                update(timePerFrame);
 		}
 		draw();
 	}
