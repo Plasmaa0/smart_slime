@@ -66,6 +66,24 @@ void Game::ProcessEvents()
 				break;
 		}
 	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+		mPlayer1.setJumping(true);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+		mPlayer1.setMovingLeft(true);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+		mPlayer1.setMovingRight(true);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+		mPlayer2.setMovingLeft(true);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+		mPlayer2.setMovingRight(true);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+		mPlayer2.setJumping(true);
+	}
 }
 
 void Game::update(sf::Time deltatime)

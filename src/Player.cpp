@@ -25,22 +25,26 @@ void Player::update(sf::Time deltatime)
 	if (movingLeft) {
 		movingLeft = false;
 		printf("movingLeft\n");
-		m_acceleration = sf::Vector2f(-m_radius * 22, 0);
+		m_velocity.x = -m_radius * 10;
 	}
 	if (movingRight) {
 		movingRight = false;
 		printf("movingRight\n");
-		m_acceleration = sf::Vector2f(m_radius * 22, 0);
+		m_velocity.x = m_radius * 10;
 	}
 	if (jumping) {
 		jumping = false;
 		printf("jumping\n");
-		m_acceleration = sf::Vector2f(0, -m_radius * 22 * 30);
+		m_velocity.y = -m_radius * 22;
 	}
-	m_velocity += (m_acceleration+sf::Vector2f(0,600))*deltatime.asSeconds();
+	// m_acceleration.y += 10;
+	// if (m_acceleration.y > 1000) m_acceleration.y = 1000;
+	auto summ_acceleration = m_acceleration + sf::Vector2f(0, 3000);
+	m_velocity += summ_acceleration * deltatime.asSeconds();
+	printf("%f, %f\n", summ_acceleration.x, summ_acceleration.y);
 	m_position += m_velocity * deltatime.asSeconds();
-	m_acceleration *= 0.0f;
-	m_velocity *= 0.9f;
+	m_acceleration.x *= 0.0f;
+	m_velocity.x *= 0.9f;
 }
 
 void Player::setMovingLeft(const bool state)
