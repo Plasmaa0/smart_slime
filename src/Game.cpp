@@ -142,7 +142,7 @@ void Game::update(sf::Time deltatime)
 
 	ProcessPhysicsAfter();
 
-	// ProcessWin();
+	ProcessWin();
 }
 
 void Game::draw()

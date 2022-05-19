@@ -22,6 +22,11 @@ sf::Vector2f projectedOnto(const sf::Vector2f &vector, const sf::Vector2f &axis)
 	return dot(axis, vector) / lengthSq(axis) * axis;
 }
 
+sf::Vector2f normalized(const sf::Vector2f &vector)
+{
+	return vector / length(vector);
+}
+
 float sigmoid(const float x)
 {
 	return 1 / (1 + exp(-x));
